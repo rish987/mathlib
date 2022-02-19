@@ -96,11 +96,7 @@ end
 lemma degree_annihilating_ideal_generator_le_of_mem (u : V →ₗ[𝕜] V) (p : 𝕜[X])
   (hp : p ∈ annihilating_ideal u) (hpn0 : p ≠ 0) :
   degree (annihilating_ideal_generator u) ≤ degree p :=
-begin
-  apply degree_le_of_dvd hpn0,
-  cases (mem_iff_generator_dvd u p).1 hp with q hpgq,
-  exact dvd.intro q (eq.symm hpgq),
-end
+degree_le_of_dvd hpn0 ((mem_iff_generator_dvd u p).1 hp)
 
 /-- This is what we have been building to:
 The monic generator of the annihilating ideal is the minimal polynomial. -/
@@ -116,7 +112,7 @@ begin
   { apply annihilating_ideal_generator_aeval_0, },
   /- 3rd condition: the poly has minimal degree among annihilators of u -/
   { intros q hqm heval,
-    apply mem_iff_deg_ge_deg_generator u q _ _,
+    apply degree_annihilating_ideal_generator_le_of_mem u q _ _,
     exact (mem_annihilating_ideal_iff_aeval_0 u q).2 heval,
     exact monic.ne_zero hqm, }
 end
