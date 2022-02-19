@@ -5,6 +5,7 @@ Authors: Yury G. Kudryashov
 -/
 import analysis.complex.cauchy_integral
 import analysis.convex.integral
+import analysis.normed_space.completion
 
 /-!
 # Maximum modulus principle
@@ -40,13 +41,15 @@ open_locale topological_space filter nnreal real
 universes u v w
 variables {E : Type u} [normed_group E] [normed_space ℂ E]
   {F : Type v} [normed_group F] [normed_space ℂ F] [measurable_space F] [borel_space F]
-    [second_countable_topology F] [complete_space F]
+    [second_countable_topology F]
+
+local postfix `̂`:100 := uniform_space.completion
 
 namespace complex
 
 /-- Auxiliary lemma, use `complex.norm_eq_norm_of_is_max_on_of_closed_ball_subset` instead. -/
-lemma norm_eq_norm_of_is_max_on_of_closed_ball_subset_dim1
-  {f : ℂ → F} {s : set ℂ} {z w : ℂ} (hd : differentiable_on ℂ f s) (hz : is_max_on (norm ∘ f) s z)
+lemma norm_max_aux₁ [complete_space F] {f : ℂ → F} {s : set ℂ} {z w : ℂ}
+  (hd : differentiable_on ℂ f s) (hz : is_max_on (norm ∘ f) s z)
   (hsub : closed_ball z (dist w z) ⊆ s) :
   ∥f w∥ = ∥f z∥ :=
 begin
@@ -74,6 +77,20 @@ begin
   ac_refl
 end
 
+/-- Auxiliary lemma, use `complex.norm_eq_norm_of_is_max_on_of_closed_ball_subset` instead. -/
+lemma norm_max_aux₂ {f : ℂ → F} {s : set ℂ} {z w : ℂ} (hd : differentiable_on ℂ f s)
+  (hz : is_max_on (norm ∘ f) s z) (hsub : closed_ball z (dist w z) ⊆ s) :
+  ∥f w∥ = ∥f z∥ :=
+begin
+  haveI : second_countable_topology (F̂) := uniform_space.second_countable_of_separable _,
+  letI : measurable_space (F̂) := borel _, haveI : borel_space (F̂) := ⟨rfl⟩,
+  set e : F →L[ℂ] F̂ := uniform_space.completion.to_complL,
+  replace hd : differentiable_on ℂ (e ∘ f) s, from e.differentiable.comp_differentiable_on hd,
+  have he : ∀ x, ∥e x∥ = ∥x∥, from uniform_space.completion.norm_coe,
+  replace hz : is_max_on (norm ∘ (e ∘ f)) s z, by simpa only [is_max_on, (∘), he] using hz,
+  simpa only [he] using norm_max_aux₁ hd hz hsub
+end
+
 /-- If `f : E → F` is complex differentiable on a set `s`, the norm of `f` takes it maximum on `s`
 at `z` and `w` is a point such that the closed ball with center `z` and radius `dist w z` is
 included in `s`, then `∥f w∥ = ∥f z∥`. -/
@@ -86,8 +103,7 @@ begin
   suffices : ∥(f ∘ e) 1∥ = ∥(f ∘ e) 0∥, by simpa [e],
   have : differentiable_on ℂ (f ∘ e) ((λ t : ℂ, t • (w - z) + z) ⁻¹' s),
     from hd.comp ((differentiable_on_id.smul_const (w - z)).add_const z) subset.rfl,
-  refine norm_eq_norm_of_is_max_on_of_closed_ball_subset_dim1
-    this _ _,
+  refine norm_max_aux₂ this _ _,
   { refine λ t ht, _, simpa [e] using hz ht },
   { refine λ t ht, hsub _,
     have : abs t ≤ 1, by simpa using ht,
