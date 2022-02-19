@@ -49,7 +49,7 @@ noncomputable def annihilating_ideal (u : M →ₗ[A] M) : ideal A[X] :=
 /-- It is useful to refer to ideal membership sometimes
  and the annihilation condition other times -/
 lemma mem_annihilating_ideal_iff_aeval_0 (u : M →ₗ[A] M) (p : A[X])
- : (p ∈ annihilating_ideal u) ↔ (aeval u) p = 0 :=
+ : p ∈ annihilating_ideal u ↔ aeval u p = 0 :=
 iff.rfl
 
 variables {𝕜 V : Type*}
@@ -57,7 +57,7 @@ variables [field 𝕜] [add_comm_group V] [module 𝕜 V]
 
 /-- Since `𝕜[x]` is a principal ideal domain there is a polynomial `g` such that
  `span 𝕜 {g} = annihilating_ideal u` -/
-noncomputable def annihilating_ideal_generator (u : V →ₗ[𝕜] V) : polynomial 𝕜 :=
+noncomputable def annihilating_ideal_generator (u : V →ₗ[𝕜] V) : 𝕜[X] :=
   submodule.is_principal.generator (annihilating_ideal u)
 
 /-- We are working toward showing the generator of the annihilating ideal
