@@ -44,7 +44,7 @@ on `module.End A M` (`= (M →ₗ[A] M)`).  This is given to us by `polynomial.a
 Using this definition, we can define the annihilating ideal of `u` to be
 `{ p ∈ A[x] | p(u) = 0 }`. This is an ideal in `A[X]`. -/
 noncomputable def annihilating_ideal (u : M →ₗ[A] M) : ideal A[X] :=
-  ring_hom.ker (aeval u).to_ring_hom
+ring_hom.ker (aeval u).to_ring_hom
 
 /-- It is useful to refer to ideal membership sometimes
  and the annihilation condition other times -/
@@ -58,7 +58,7 @@ variables [field 𝕜] [add_comm_group V] [module 𝕜 V]
 /-- Since `𝕜[x]` is a principal ideal domain there is a polynomial `g` such that
  `span 𝕜 {g} = annihilating_ideal u` -/
 noncomputable def annihilating_ideal_generator (u : V →ₗ[𝕜] V) : 𝕜[X] :=
-  submodule.is_principal.generator (annihilating_ideal u)
+submodule.is_principal.generator (annihilating_ideal u)
 
 /-- We are working toward showing the generator of the annihilating ideal
 in the field case is the minimal polynomial. We are going to use a uniqueness
@@ -75,7 +75,7 @@ end
 /-- This is a stepping stone to show the generator has minimal degree -/
 lemma mem_iff_generator_dvd (u : V →ₗ[𝕜] V) (p : 𝕜[X]) :
   p ∈ annihilating_ideal u ↔ annihilating_ideal_generator u ∣ p :=
-  submodule.is_principal.mem_iff_generator_dvd (annihilating_ideal u)
+submodule.is_principal.mem_iff_generator_dvd (annihilating_ideal u)
 
 /-- We are working toward showing the generator of the annihilating ideal
 in the field case is the minimal polynomial. We are going to use a uniqueness
