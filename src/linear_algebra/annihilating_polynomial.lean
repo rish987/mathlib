@@ -93,7 +93,7 @@ end
 
 /-- The generator of the annihilating ideal has minimal degree among
  the non-zero members of the annihilating ideal -/
-lemma mem_iff_deg_ge_deg_generator (u : V →ₗ[𝕜] V) (p : 𝕜[X])
+lemma degree_annihilating_ideal_generator_le_of_mem (u : V →ₗ[𝕜] V) (p : 𝕜[X])
   (hp : p ∈ annihilating_ideal u) (hpn0 : p ≠ 0) :
   degree (annihilating_ideal_generator u) ≤ degree p :=
 begin
