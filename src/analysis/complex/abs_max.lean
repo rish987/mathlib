@@ -30,9 +30,9 @@ yet.
 
 ## TODO
 
-All theorems in this file assume that the codomain is a complete space with second countable
-topology. Both assumption can and should be removed, either during the planned refactor of the
-Bochner integral, or by applying current version to the completion of the span of the range of `f`.
+All theorems in this file assume that the codomain is a normed space with second countable
+topology. The latter assumption can and should be removed, either during the planned refactor of the
+Bochner integral, or by applying current version to the span of the range of `f`.
 -/
 
 open topological_space metric set filter asymptotics function measure_theory
@@ -40,8 +40,7 @@ open_locale topological_space filter nnreal real
 
 universes u v w
 variables {E : Type u} [normed_group E] [normed_space ℂ E]
-  {F : Type v} [normed_group F] [normed_space ℂ F] [measurable_space F] [borel_space F]
-    [second_countable_topology F]
+  {F : Type v} [normed_group F] [normed_space ℂ F] [second_countable_topology F]
 
 local postfix `̂`:100 := uniform_space.completion
 
@@ -53,6 +52,7 @@ lemma norm_max_aux₁ [complete_space F] {f : ℂ → F} {s : set ℂ} {z w : �
   (hsub : closed_ball z (dist w z) ⊆ s) :
   ∥f w∥ = ∥f z∥ :=
 begin
+  letI : measurable_space F := borel F, haveI : borel_space F := ⟨rfl⟩,
   set r := dist w z,
   have hw_mem : w ∈ closed_ball z r, from mem_closed_ball.2 le_rfl,
   refine (is_max_on_iff.1 hz _ (hsub hw_mem)).antisymm (not_lt.1 _),
@@ -83,7 +83,6 @@ lemma norm_max_aux₂ {f : ℂ → F} {s : set ℂ} {z w : ℂ} (hd : differenti
   ∥f w∥ = ∥f z∥ :=
 begin
   haveI : second_countable_topology (F̂) := uniform_space.second_countable_of_separable _,
-  letI : measurable_space (F̂) := borel _, haveI : borel_space (F̂) := ⟨rfl⟩,
   set e : F →L[ℂ] F̂ := uniform_space.completion.to_complL,
   replace hd : differentiable_on ℂ (e ∘ f) s, from e.differentiable.comp_differentiable_on hd,
   have he : ∀ x, ∥e x∥ = ∥x∥, from uniform_space.completion.norm_coe,

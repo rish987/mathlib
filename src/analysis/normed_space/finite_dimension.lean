@@ -735,7 +735,8 @@ begin
 end
 
 /-- If `K` is a compact set in a nontrivial real normed space and `x ∈ K`, then there exists a point
-`y` of the boundary of `K` at distance `metric.inf_dist x Kᶜ` from `x`. See also `exists_mem_frontier_inf_dist_compl_eq_dist`. -/
+`y` of the boundary of `K` at distance `metric.inf_dist x Kᶜ` from `x`. See also
+`exists_mem_frontier_inf_dist_compl_eq_dist`. -/
 lemma is_compact.exists_mem_frontier_inf_dist_compl_eq_dist {E : Type*} [normed_group E]
   [normed_space ℝ E] [nontrivial E] {x : E} {K : set E} (hK : is_compact K) (hx : x ∈ K) :
   ∃ y ∈ frontier K, metric.inf_dist x Kᶜ = dist x y :=
