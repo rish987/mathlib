@@ -1167,12 +1167,11 @@ begin
    and the wish that the `linarith` tactic worked on `with_bot \nat` -/
   { rw hqpg,
     rw degree_mul,
-    have hgn0: g ≠ 0, { by_contra, rw h at hqpg, rw mul_zero at hqpg, exact hqn0 hqpg, },
-    have hdeg: 0 ≤ degree g, {
-      exact degree_nonneg_iff_ne_zero.2 hgn0,
-    },
-    apply le_add_of_nonneg_right hdeg,
-  }
+    have hgn0: g ≠ 0,
+    { by_contra, rw h at hqpg, rw mul_zero at hqpg, exact hqn0 hqpg, },
+    have hdeg: 0 ≤ degree g,
+    { exact degree_nonneg_iff_ne_zero.2 hgn0, },
+    apply le_add_of_nonneg_right hdeg, }
 end
 
 @[simp] lemma degree_pow [nontrivial R] (p : R[X]) (n : ℕ) :
