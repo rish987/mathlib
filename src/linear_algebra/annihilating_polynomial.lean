@@ -48,8 +48,8 @@ ring_hom.ker (aeval u).to_ring_hom
 
 /-- It is useful to refer to ideal membership sometimes
  and the annihilation condition other times -/
-lemma mem_annihilating_ideal_iff_aeval_0 (u : M →ₗ[A] M) (p : A[X])
- : p ∈ annihilating_ideal u ↔ aeval u p = 0 :=
+lemma mem_annihilating_ideal_iff_aeval_0 (u : M →ₗ[A] M) (p : A[X]) :
+  p ∈ annihilating_ideal u ↔ aeval u p = 0 :=
 iff.rfl
 
 variables {𝕜 V : Type*}
