@@ -18,7 +18,7 @@ import ring_theory.polynomial_algebra
 Given a commutative ring `A` and an `A`-module `M`
 (`[comm_ring A] [add_comm_group M] [module A M]`)
 Every element `u : U` defines
-an ideal (`alg_hom.annihilating_ideal u ⊆ A[X]`.
+an ideal `alg_hom.annihilating_ideal u ⊆ A[X]`.
 Simply put, this is the set of polynomials `p` where
 the polynomial evaluation `p(u)` is 0.
 
@@ -75,7 +75,7 @@ section minpoly_generates
 /-- We are working toward showing the generator of the annihilating ideal
 in the field case is the minimal polynomial. We are going to use a uniqueness
 theorem of the minimal polynomial. This is the first condition: it must annihilate
-the original element `u : U`. -/
+the original element `u : V`. -/
 lemma annihilating_ideal_generator_aeval_0 (u : V) :
   aeval u (annihilating_ideal_generator 𝕜 u) = 0 :=
 begin
