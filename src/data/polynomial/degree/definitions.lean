@@ -1156,24 +1156,6 @@ else if hq0 : q = 0 then  by simp only [hq0, degree_zero, mul_zero, with_bot.add
 else degree_mul' $ mul_ne_zero (mt leading_coeff_eq_zero.1 hp0)
     (mt leading_coeff_eq_zero.1 hq0)
 
-/-- degree is "order preserving" from `(R[X], ∣)` to `(with_bot ℕ, ≤)` if q is non-zero -/
-lemma degree_le_of_dvd (hqn0 : q ≠ 0) (hpq : p ∣ q) : degree p ≤ degree q :=
-begin
-  cases hpq with g hqpg,
-  cases eq_or_ne p 0 with hp0 hp0,
-  /- case `p = 0` reduces to `⊥ ≤ x ∀ x` -/
-  { rw [hp0, zero_mul] at hqpg, rw [ hp0, hqpg ], norm_num, },
-  /- case `p ≠ 0 (p * g).degree = p.degree + q.degree`
-   and the wish that the `linarith` tactic worked on `with_bot \nat` -/
-  { rw hqpg,
-    rw degree_mul,
-    have hgn0: g ≠ 0,
-    { by_contra, rw h at hqpg, rw mul_zero at hqpg, exact hqn0 hqpg, },
-    have hdeg: 0 ≤ degree g,
-    { exact degree_nonneg_iff_ne_zero.2 hgn0, },
-    apply le_add_of_nonneg_right hdeg, }
-end
-
 @[simp] lemma degree_pow [nontrivial R] (p : R[X]) (n : ℕ) :
   degree (p ^ n) = n • (degree p) :=
 by induction n; [simp only [pow_zero, degree_one, zero_nsmul],
