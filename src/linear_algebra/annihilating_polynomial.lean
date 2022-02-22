@@ -94,7 +94,7 @@ submodule.is_principal.mem_iff_generator_dvd (annihilating_ideal 𝕜 u)
 lemma degree_annihilating_ideal_generator_le_of_mem (u : V) (p : 𝕜[X])
   (hp : p ∈ annihilating_ideal 𝕜 u) (hpn0 : p ≠ 0) :
   degree (annihilating_ideal_generator 𝕜 u) ≤ degree p :=
-degree_le_of_dvd hpn0 ((mem_iff_generator_dvd u p).1 hp)
+degree_le_of_dvd ((mem_iff_generator_dvd u p).1 hp) hpn0
 
 /-- This is what we have been building to:
 The monic generator of the annihilating ideal is the minimal polynomial. -/
