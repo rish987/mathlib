@@ -40,7 +40,7 @@ variables {A U : Type*} [comm_semiring A] [semiring U] [algebra A U]
 
 open_locale polynomial
 
-open polynomial
+namespace polynomial
 
 variables (A)
 
@@ -126,3 +126,5 @@ lemma eq_zero_of_mem_eq_zero (u : V) (p : 𝕜[X])
 begin
   rwa [mem_iff_generator_dvd, hu0, zero_dvd_iff] at hp,
 end
+
+end polynomial
