@@ -11,12 +11,14 @@ In this file, we establish various propreties related to the spectrum of element
 C⋆-algebra over ℂ.
 -/
 
+local postfix `⋆`:std.prec.max_plus := star
+
 variables {A : Type*}
 [normed_ring A] [normed_algebra ℂ A] [star_ring A] [cstar_ring A] [complete_space A]
 [measurable_space A] [borel_space A] [topological_space.second_countable_topology A]
 
 open_locale topological_space ennreal
-open filter ennreal
+open filter ennreal cstar_ring spectrum
 
 lemma spectral_radius_eq_nnnorm_of_self_adjoint {a : A} (ha : a ∈ self_adjoint A) :
   spectral_radius ℂ a = ∥a∥₊ :=
@@ -31,19 +33,20 @@ begin
   simp,
 end
 
-lemma foo₀ (a : A) [is_star_normal a] (n : ℕ) : commute ((star a) ^ n) a :=
-nat.rec_on n (by simp only [pow_zero, commute.one_left])
-  (λ k hk, calc (star a) ^ (k + 1) * a = a * (star a) ^ (k + 1)
-    : by rw [pow_succ, mul_assoc, hk.eq, ←mul_assoc, star_comm_self', mul_assoc, ←pow_succ])
-
-lemma foo₁ (a : A) [is_star_normal a] (n m : ℕ) : commute ((star a) ^ n) (a ^ m) :=
-nat.rec_on m (by simp only [pow_zero, commute.one_right])
-  (λ k hk, calc ((star a) ^ n) * (a ^ (k + 1)) = (a ^ (k + 1)) * ((star a) ^ n)
-    : by rw [pow_succ, ←mul_assoc, (foo₀ a n).eq, mul_assoc, hk.eq, ←mul_assoc])
-
-lemma foo₂ (a : A) [is_star_normal a] (n : ℕ) : (star a * a) ^ n = (star a) ^ n * a ^ n :=
-nat.rec_on n (by simp only [pow_zero, mul_one]) (λ k hk, by rw [pow_succ, hk, ←mul_assoc,
-  mul_assoc _ a _, (foo₀ a k).eq.symm, ←mul_assoc, ←pow_succ, mul_assoc, ←pow_succ])
-
-lemma foo₃ (a : A) [is_star_normal a] : spectral_radius ℂ a = ∥a∥₊ :=
-sorry
+lemma spectral_radius_eq_nnnorm_of_star_normal (a : A) [is_star_normal a] :
+  spectral_radius ℂ a = ∥a∥₊ :=
+begin
+  refine (ennreal.pow_strict_mono (by linarith : 2 ≠ 0)).injective _,
+  have ha : a⋆ * a ∈ self_adjoint A,
+    from self_adjoint.mem_iff.mpr (by simpa only [star_star] using (star_mul a⋆ a)),
+  have heq : (λ n : ℕ, ((∥(a⋆ * a) ^ n∥₊ ^ (1 / n : ℝ)) : ℝ≥0∞))
+    = (λ x, x ^ 2) ∘ (λ n : ℕ, ((∥a ^ n∥₊ ^ (1 / n : ℝ)) : ℝ≥0∞)),
+  { funext,
+    rw [function.comp_apply, ←rpow_nat_cast, ←rpow_mul, mul_comm, rpow_mul, rpow_nat_cast,
+      ←coe_pow, sq, ←nnnorm_star_mul_self, (star_comm_self a).mul_pow, star_pow], },
+  have h₂ := ((ennreal.continuous_pow 2).tendsto (spectral_radius ℂ a)).comp
+    (spectrum.pow_nnnorm_pow_one_div_tendsto_nhds_spectral_radius a),
+  rw ←heq at h₂,
+  convert tendsto_nhds_unique h₂ (pow_nnnorm_pow_one_div_tendsto_nhds_spectral_radius (a⋆ * a)),
+  rw [spectral_radius_eq_nnnorm_of_self_adjoint ha, sq, nnnorm_star_mul_self, coe_mul],
+end
