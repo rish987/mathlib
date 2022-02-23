@@ -1168,6 +1168,22 @@ map_at_top_eq_of_gc (λb, b * k + (k - 1)) 1
     calc b = (b * k) / k : by rw [nat.mul_div_cancel b hk]
       ... ≤ (b * k + (k - 1)) / k : nat.div_le_div_right $ nat.le_add_right _ _)
 
+lemma monotone.tendsto_at_top_at_top_or_eventually_const_of_nat -- [nonempty ι] [preorder ι] [semilattice_sup ι]
+  {f : ℕ → ℕ} (hf : monotone f) : tendsto f at_top at_top ∨ ∃ x, f =ᶠ[at_top] (λ _, x) :=
+begin
+  by_cases h : ∃ x, f =ᶠ[at_top] λ _, x,
+  { right, assumption },
+  left,
+  simp only [eventually_eq, eventually_at_top, ge_iff_le, not_exists, not_forall, exists_prop] at h,
+  apply tendsto_at_top_at_top_of_monotone hf,
+  intro x,
+  induction x with x hx,
+  { simp only [exists_const, zero_le] },
+  cases hx with a ha,
+  rcases h x a with ⟨b, hb1, hb2⟩,
+  exact ⟨b, (nat.succ_le_iff.mpr $ (ne.symm hb2).le_iff_lt.mp $ le_trans ha $ hf hb1)⟩,
+end
+
 /-- If `u` is a monotone function with linear ordered codomain and the range of `u` is not bounded
 above, then `tendsto u at_top at_top`. -/
 lemma tendsto_at_top_at_top_of_monotone' [preorder ι] [linear_order α]
