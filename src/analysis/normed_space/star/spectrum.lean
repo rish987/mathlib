@@ -42,5 +42,8 @@ nat.rec_on m (by simp only [pow_zero, commute.one_right])
     : by rw [pow_succ, ←mul_assoc, (foo₀ a n).eq, mul_assoc, hk.eq, ←mul_assoc])
 
 lemma foo₂ (a : A) [is_star_normal a] (n : ℕ) : (star a * a) ^ n = (star a) ^ n * a ^ n :=
-nat.rec_on n (by simp only [pow_zero, mul_one]) (λ n hn, by rw [pow_succ, hk, ←mul_assoc,
+nat.rec_on n (by simp only [pow_zero, mul_one]) (λ k hk, by rw [pow_succ, hk, ←mul_assoc,
   mul_assoc _ a _, (foo₀ a k).eq.symm, ←mul_assoc, ←pow_succ, mul_assoc, ←pow_succ])
+
+lemma foo₃ (a : A) [is_star_normal a] : spectral_radius ℂ a = ∥a∥₊ :=
+sorry
