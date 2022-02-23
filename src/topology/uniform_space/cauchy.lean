@@ -189,6 +189,16 @@ lemma cauchy_seq.comp_injective [semilattice_sup β] [no_max_order β] [nonempty
   cauchy_seq (u ∘ f) :=
 hu.comp_tendsto $ nat.cofinite_eq_at_top ▸ hf.tendsto_cofinite.mono_left at_top_le_cofinite
 
+lemma cauchy_seq.comp_eventually_const {γ} [semilattice_sup β] [nonempty β] [semilattice_sup γ]
+  [nonempty γ] {f : β → α} (hf : cauchy_seq f) {g : γ → β} {x : β} (hg : g =ᶠ[at_top] λ _, x) :
+  cauchy_seq (f ∘ g) :=
+begin
+  refine cauchy_seq_of_eventually_const (f x) _,
+  rw [eventually_eq, eventually_at_top] at ⊢ hg,
+  cases hg with N hN,
+  exact ⟨N, λ b hab, congr_arg f (hN b hab)⟩
+end
+
 lemma function.bijective.cauchy_seq_comp_iff {f : ℕ → ℕ} (hf : bijective f) (u : ℕ → α) :
   cauchy_seq (u ∘ f) ↔ cauchy_seq u :=
 begin
@@ -723,29 +733,36 @@ end uniform_space
 
 section covariant
 
-variables {f : ℕ → α}
+variables {N : Type*}
 
-/-- Proves things like `cauchy_seq f → cauchy_seq (λ (n : ℕ), f (1+n))` and
-works with `library_search`. -/
-lemma cauchy_seq.covariant_of_const_left {μ : ℕ → ℕ → ℕ} [covariant_class ℕ ℕ μ (≤)]
-  (hf : cauchy_seq f) {m : ℕ} : cauchy_seq (λ n, f (μ m n)) :=
+/-- Proves things like `cauchy_seq f → cauchy_seq (λ (n : ℕ), f (1+n))` by `library_search`. -/
+lemma cauchy_seq.covariant_of_const_left_nat {f : ℕ → α} {μ : ℕ → ℕ → ℕ}
+  [covariant_class ℕ ℕ μ (≤)] (hf : cauchy_seq f) {m : ℕ} : cauchy_seq (λ n, f (μ m n)) :=
 begin
-  have hμ := monotone.tendsto_at_top_at_top_or_eventually_const_nat
-    (@covariant.monotone_of_const _ _ μ _ _ m),
-  revert hμ,
-  rw or_imp_distrib,
-  split,
-  { exact λ h, cauchy_seq.comp_tendsto hf h },
-  rintro ⟨N, hN⟩,
-  refine cauchy_seq_of_eventually_const (f N) _,
-  simp only [eventually_eq, eventually_at_top, ge_iff_le] at ⊢ hN,
-  cases hN with a ha,
-  use a,
-  exact λ b hab, congr_arg f (ha b hab)
+  have := monotone.tendsto_at_top_at_top_or_eventually_const_nat
+    (@covariant.monotone_of_const _ _ μ _ _ _),
+  rcases this with h | ⟨_, hN⟩,
+  { exact cauchy_seq.comp_tendsto hf h },
+  { exact hf.comp_eventually_const hN },
 end
 
-lemma cauchy_seq.covariant_of_const_right {μ : ℕ → ℕ → ℕ} [covariant_class ℕ ℕ (swap μ) (≤)]
-  (hf : cauchy_seq f) {m : ℕ} : cauchy_seq (λ n, f (μ n m)) :=
-@cauchy_seq.covariant_of_const_left _ _ f (swap μ) _ hf m
+lemma cauchy_seq.covariant_of_const_right_nat {f : ℕ → α}{μ : ℕ → ℕ → ℕ}
+  [covariant_class ℕ ℕ (swap μ) (≤)] (hf : cauchy_seq f) {m : ℕ} : cauchy_seq (λ n, f (μ n m)) :=
+@cauchy_seq.covariant_of_const_left_nat _ _ f (swap μ) _ hf m
+
+/-- Proves things like `cauchy_seq f → cauchy_seq (λ (n : ℕ), f (1+n))` by `library_search`. -/
+lemma cauchy_seq.covariant_of_const_left_int {f : ℤ → α} {μ : ℤ → ℤ → ℤ}
+  [covariant_class ℤ ℤ μ (≤)] (hf : cauchy_seq f) {m} : cauchy_seq (λ n, f (μ m n)) :=
+begin
+  have := monotone.tendsto_at_top_at_top_or_eventually_const_int
+    (@covariant.monotone_of_const _ _ μ _ _ m),
+  rcases this with h | ⟨_, hN⟩,
+  { exact cauchy_seq.comp_tendsto hf h },
+  { exact hf.comp_eventually_const hN },
+end
+
+lemma cauchy_seq.covariant_of_const_right_int {f : ℤ → α} {μ : ℤ → ℤ → ℤ}
+  [covariant_class ℤ ℤ (swap μ) (≤)] (hf : cauchy_seq f) {m} : cauchy_seq (λ n, f (μ n m)) :=
+@cauchy_seq.covariant_of_const_left_int _ _ f (swap μ) _ hf m
 
 end covariant
