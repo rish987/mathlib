@@ -30,3 +30,17 @@ begin
     ←rpow_mul],
   simp,
 end
+
+lemma foo₀ (a : A) [is_star_normal a] (n : ℕ) : commute ((star a) ^ n) a :=
+nat.rec_on n (by simp only [pow_zero, commute.one_left])
+  (λ k hk, calc (star a) ^ (k + 1) * a = a * (star a) ^ (k + 1)
+    : by rw [pow_succ, mul_assoc, hk.eq, ←mul_assoc, star_comm_self', mul_assoc, ←pow_succ])
+
+lemma foo₁ (a : A) [is_star_normal a] (n m : ℕ) : commute ((star a) ^ n) (a ^ m) :=
+nat.rec_on m (by simp only [pow_zero, commute.one_right])
+  (λ k hk, calc ((star a) ^ n) * (a ^ (k + 1)) = (a ^ (k + 1)) * ((star a) ^ n)
+    : by rw [pow_succ, ←mul_assoc, (foo₀ a n).eq, mul_assoc, hk.eq, ←mul_assoc])
+
+lemma foo₂ (a : A) [is_star_normal a] (n : ℕ) : (star a * a) ^ n = (star a) ^ n * a ^ n :=
+nat.rec_on n (by simp only [pow_zero, mul_one]) (λ n hn, by rw [pow_succ, hk, ←mul_assoc,
+  mul_assoc _ a _, (foo₀ a k).eq.symm, ←mul_assoc, ←pow_succ, mul_assoc, ←pow_succ])
